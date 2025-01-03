@@ -4,18 +4,18 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 
-dotenv.config(); 
+dotenv.config();
 
 const app = express();
 
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors());
-
+app.use(
+  cors()
+);
 
 mongoose
-  .connect(process.env.uri || '', {})
+  .connect(process.env.uri || "", {})
   .then(() => console.log("MongoDB connected successfully"))
   .catch((err: Error) => console.error("MongoDB connection error:", err));
 
@@ -28,7 +28,6 @@ app.use("/posts", postRoutes);
 app.use("/category", categoryRoutes);
 app.use("/analysis", analyticsRoutes);
 app.use("/auth", authRoutes);
-
 
 const PORT: number = Number(process.env.PORT) || 8080;
 app.listen(PORT, () => {
