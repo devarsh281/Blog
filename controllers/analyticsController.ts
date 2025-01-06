@@ -7,11 +7,12 @@ const analyticsController = {
       const total: number = await Post.countDocuments();
       const views = await Post.find({}, { title: 1, views: 1 });
 
-      res.status(200).json({ total, views });
+      res.status(200).json({ total,views });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   },
 };
+
 
 export default analyticsController;

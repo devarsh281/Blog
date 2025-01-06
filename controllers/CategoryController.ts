@@ -40,10 +40,7 @@ const CategoryController = {
   getAll: async (req: Request, res: Response): Promise<void> => {
     try {
       const category = await Category.find();
-      // if (!data) {
-      //   res.status(404).json({ message: "Category not found!" });
-      //   return;
-      // }
+    
       res.status(200).json({ data :category});
     } catch (error: any) {
       res.status(400).json({ message: error.message });
