@@ -6,7 +6,7 @@ export interface IPost extends Document {
   description: string;
   category: string;
   date?: Date;
-  views?: number;
+  views: number;
 }
 
 const PostSchema: Schema = new Schema({
