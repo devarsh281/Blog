@@ -1,12 +1,26 @@
 import { Request, Response } from "express";
 import Post, { IPost } from "../models/PostModel";
 import Counter, { ICounter } from "../models/Counter";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, "uploads"),
+  filename: function (req, file, res) {
+    res(null, Date.now() + "-" + file.originalname);
+  },
+});
 
+let upload = multer({ storage });
 const PostController = {
   createPost: async (req: Request, res: Response): Promise<void> => {
     try {
-      const { title, description, category } = req.body;
+      const { title, description, category, image } = req.body;
 
+      let imageUrl = "";
+      if (req.file) {
+        imageUrl = `/uploads/${req.file.filename}`;
+      }
       const postCount = await Post.countDocuments();
 
       let counter;
@@ -34,6 +48,7 @@ const PostController = {
         title,
         description,
         category,
+        image: imageUrl,
       });
 
       await newPost.save();
@@ -64,10 +79,31 @@ const PostController = {
         res.status(404).json({ message: "Post not found!" });
         return;
       }
-
       res.status(200).json(post);
     } catch (error: any) {
       res.status(400).json({ message: error.message });
+    }
+  },
+
+  getImageByPostID: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+
+      const post = await Post.findOne({ id: Number(id) });
+      if (!post || !post.image) {
+        res.status(404).json({ message: "Image not found for this post" });
+        return;
+      }
+      const imagePath = path.join(__dirname, "..", post.image);
+
+      if (!fs.existsSync(imagePath)) {
+        res.status(404).json({ message: "Image file not found" });
+        return;
+      }
+
+      res.sendFile(imagePath);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
   },
 

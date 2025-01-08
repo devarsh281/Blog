@@ -7,6 +7,7 @@ export interface IPost extends Document {
   category: string;
   date?: Date;
   views: number;
+  image:string;
 }
 
 const PostSchema: Schema = new Schema({
@@ -34,6 +35,10 @@ const PostSchema: Schema = new Schema({
     type: Number,
     default: 0,
   },
+  image:{
+    type:String,
+    required:true,
+  }
 });
 
 const Post: Model<IPost> = mongoose.model<IPost>("Post", PostSchema);
