@@ -28,6 +28,9 @@ app.use("/posts", postRoutes);
 app.use("/category", categoryRoutes);
 app.use("/analysis", analyticsRoutes);
 app.use("/auth", authRoutes);
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hello, welcome to the blog API!');
+});
 
 const PORT: number = Number(process.env.PORT) || 8080;
 app.listen(PORT, () => {
