@@ -20,5 +20,12 @@ router.get("/getID/:id", PostController.getPostByID);
 router.get("/images/:id", PostController.getImageByPostID);
 router.put("/updatepost/:id", PostController.updatePost);
 router.delete("/delpost/:id", PostController.deletePost);
+router.post("/likepost/:id",PostController.likePost);
+router.post("/comment/:id",PostController.commentOnPost);
+router.get("/getcomment/:id",PostController.getAllComments);
+router.delete("/delcomment/:id",PostController.deleteAllComments);
 
 export default router;
+
+
+

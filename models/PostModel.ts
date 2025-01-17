@@ -7,7 +7,10 @@ export interface IPost extends Document {
   category: string;
   date?: Date;
   views: number;
-  image:string;
+  image: string;
+  likes: string[];
+  likesCount: number;
+  comments: { userId: Number; text: string,dat:Date }[];
 }
 
 const PostSchema: Schema = new Schema({
@@ -35,10 +38,25 @@ const PostSchema: Schema = new Schema({
     type: Number,
     default: 0,
   },
-  image:{
-    type:String,
-    required:true,
-  }
+  image: {
+    type: String,
+    required: true,
+  },
+  likes: {
+    type: [String],
+    default: [],
+  },
+  likesCount: {
+    type: Number,
+    default: 0,  
+  },
+  comments: [
+    {
+      userId: { type: Number, unique: true },
+      text: { type: String, required: true },
+      dat: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 const Post: Model<IPost> = mongoose.model<IPost>("Post", PostSchema);
