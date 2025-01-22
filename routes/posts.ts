@@ -24,6 +24,7 @@ router.post("/likepost/:id",PostController.likePost);
 router.post("/comment/:id",PostController.commentOnPost);
 router.get("/getcomment/:id",PostController.getAllComments);
 router.delete("/delcomment/:id",PostController.deleteAllComments);
+// router.delete("/dellikes/:id",PostController.clearAllLikes);
 
 export default router;
 

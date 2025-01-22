@@ -52,7 +52,7 @@ const PostSchema: Schema = new Schema({
   },
   comments: [
     {
-      userId: { type: Number, unique: true },
+      userId: { type: Number },
       text: { type: String, required: true },
       dat: { type: Date, default: Date.now },
     },

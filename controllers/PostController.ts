@@ -155,10 +155,10 @@ const PostController = {
   likePost: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const { userId } = req.body;
+      // const { userId } = req.body;
 
       console.log("Post ID:", id);
-      console.log("User ID:", userId);
+      // console.log("User ID:", userId);
 
       const post: IPost | null = await Post.findOne({ id: Number(id) });
       if (!post) {
@@ -169,13 +169,13 @@ const PostController = {
 
       console.log("Current Likes Array:", post.likes);
 
-      if (post.likes.includes(userId)) {
-        console.log("User has already liked this post.");
-        res.status(400).json({ message: "You have already liked this post!" });
-        return;
-      }
+      // if (post.likes.includes(userId)) {
+      //   console.log("User has already liked this post.");
+      //   res.status(400).json({ message: "You have already liked this post!" });
+      //   return;
+      // }
 
-      post.likes.push(userId);
+      // post.likes.push(userId);
       post.likesCount += 1;
 
       console.log("Updated Likes Array:", post.likes);
@@ -189,29 +189,29 @@ const PostController = {
     }
   },
 
-  clearAllLikes: async (req: Request, res: Response) => {
-    const { postId } = req.body;
+  // clearAllLikes: async (req: Request, res: Response) => {
+  //   const { postId } = req.body;
 
-    try {
-      const post = await Post.findById(postId);
-      if (!post) {
-        return res.status(404).json({ message: "Post not found!" });
-      }
+  //   try {
+  //     const post = await Post.findById(postId);
+  //     if (!post) {
+  //       return res.status(404).json({ message: "Post not found!" });
+  //     }
 
-      post.likes = [];
-      post.likesCount = 0;
-      await post.save();
+  //     post.likes = [];
+  //     post.likesCount = 0;
+  //     await post.save();
 
-      return res
-        .status(200)
-        .json({ message: "All likes cleared successfully!" });
-    } catch (error) {
-      console.error(error);
-      return res
-        .status(500)
-        .json({ message: "An error occurred while clearing likes!" });
-    }
-  },
+  //     return res
+  //       .status(200)
+  //       .json({ message: "All likes cleared successfully!" });
+  //   } catch (error) {
+  //     console.error(error);
+  //     return res
+  //       .status(500)
+  //       .json({ message: "An error occurred while clearing likes!" });
+  //   }
+  // },
 
   commentOnPost: async (req: Request, res: Response): Promise<void> => {
     try {
@@ -278,3 +278,4 @@ const PostController = {
 };
 
 export default PostController;
+
