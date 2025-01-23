@@ -15,6 +15,8 @@ let upload = multer({ storage });
 let commentCounter = 0;
 
 const PostController = {
+  
+  // Creating Post
   createPost: async (req: Request, res: Response): Promise<void> => {
     try {
       const { title, description, category, image } = req.body;
@@ -63,6 +65,7 @@ const PostController = {
     }
   },
 
+  // Fetching All Post
   getAllPosts: async (req: Request, res: Response): Promise<void> => {
     try {
       const posts: IPost[] = await Post.find();
@@ -72,6 +75,7 @@ const PostController = {
     }
   },
 
+  //  Fetching  Post by ID
   getPostByID: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
@@ -87,6 +91,8 @@ const PostController = {
     }
   },
 
+  
+    //  Fetching  Image by ID
   getImageByPostID: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
@@ -109,6 +115,7 @@ const PostController = {
     }
   },
 
+  // Updating Post
   updatePost: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
@@ -133,6 +140,7 @@ const PostController = {
     }
   },
 
+  // Deleting Post
   deletePost: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
@@ -152,13 +160,14 @@ const PostController = {
     }
   },
 
+  // Like the Post
   likePost: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      // const { userId } = req.body;
+      const { username } = req.body;
 
       console.log("Post ID:", id);
-      // console.log("User ID:", userId);
+      console.log("User Name:", username);
 
       const post: IPost | null = await Post.findOne({ id: Number(id) });
       if (!post) {
@@ -169,14 +178,15 @@ const PostController = {
 
       console.log("Current Likes Array:", post.likes);
 
-      // if (post.likes.includes(userId)) {
-      //   console.log("User has already liked this post.");
-      //   res.status(400).json({ message: "You have already liked this post!" });
-      //   return;
-      // }
-
-      // post.likes.push(userId);
-      post.likesCount += 1;
+      if (post.likes.includes(username)) {
+        console.log("User has already liked this post.");
+        post.likes = post.likes.filter((user) => user !== username);
+        post.likesCount -= 1;
+      } else {
+        console.log("User liking the post.");
+        post.likes.push(username);
+        post.likesCount += 1;
+      }
 
       console.log("Updated Likes Array:", post.likes);
 
@@ -189,34 +199,62 @@ const PostController = {
     }
   },
 
-  // clearAllLikes: async (req: Request, res: Response) => {
-  //   const { postId } = req.body;
+  // Fetching All Likes
+  getAllLikes: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
 
-  //   try {
-  //     const post = await Post.findById(postId);
-  //     if (!post) {
-  //       return res.status(404).json({ message: "Post not found!" });
-  //     }
+      const post: IPost | null = await Post.findOne({ id: Number(id) });
 
-  //     post.likes = [];
-  //     post.likesCount = 0;
-  //     await post.save();
+      if (!post) {
+        res.status(404).json({ message: "Post not found!" });
+        return;
+      }
 
-  //     return res
-  //       .status(200)
-  //       .json({ message: "All likes cleared successfully!" });
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res
-  //       .status(500)
-  //       .json({ message: "An error occurred while clearing likes!" });
-  //   }
-  // },
+      res.status(200).json({ likes: post.likesCount });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  },
 
+  // Deleting All Likes
+  clearAllLikes: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const post: IPost | null = await Post.findOne({ id: Number(id) });
+      console.log(post);
+
+      if (!post) {
+        res.status(404).json({ message: "Post not found!" });
+      }
+
+      console.log("Current Likes Array:", post?.likes);
+
+      if (post != null) {
+        post.likes = [];
+        post.likesCount = 0;
+
+        await post.save();
+        console.log("Likes cleared. Updated Likes Array:", post.likes);
+      } else {
+        console.log("post is null");
+      }
+
+      res.status(200).json({ message: "All likes cleared successfully!" });
+    } catch {
+      console.error("Error clearing likes:");
+      res
+        .status(500)
+        .json({ message: "An error occurred while clearing likes!" });
+    }
+  },
+
+  // Commenting on the Post
   commentOnPost: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
       const { text } = req.body;
+      const { username } = req.body;
       const now = new Date();
 
       const post: IPost | null = await Post.findOne({ id: Number(id) });
@@ -240,6 +278,7 @@ const PostController = {
     }
   },
 
+  // Fetching All Comments
   getAllComments: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
@@ -256,6 +295,8 @@ const PostController = {
       res.status(400).json({ message: error.message });
     }
   },
+
+  // Deleting All Comments
   deleteAllComments: async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
@@ -278,4 +319,3 @@ const PostController = {
 };
 
 export default PostController;
-

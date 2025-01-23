@@ -4,16 +4,14 @@ import multer from "multer";
 import path from "path";
 
 const router: Router = express.Router();
-
 const storage = multer.diskStorage({
-    destination: path.join(__dirname, "../uploads"),
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + "-" + file.originalname);
-    },
-  });
-  
-  const upload = multer({ storage });
+  destination: path.join(__dirname, "../uploads"), 
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname); 
+  },
+});
 
+const upload = multer({ storage });
 router.post("/addpost",upload.single("image"), PostController.createPost);
 router.get("/getAll", PostController.getAllPosts); 
 router.get("/getID/:id", PostController.getPostByID);
@@ -23,8 +21,9 @@ router.delete("/delpost/:id", PostController.deletePost);
 router.post("/likepost/:id",PostController.likePost);
 router.post("/comment/:id",PostController.commentOnPost);
 router.get("/getcomment/:id",PostController.getAllComments);
+router.get("/getlikes/:id",PostController.getAllLikes);
 router.delete("/delcomment/:id",PostController.deleteAllComments);
-// router.delete("/dellikes/:id",PostController.clearAllLikes);
+router.delete("/dellikes/:id",PostController.clearAllLikes);
 
 export default router;
 
