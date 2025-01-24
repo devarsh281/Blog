@@ -40,7 +40,7 @@ const PostSchema: Schema = new Schema({
   },
   image: {
     type: String,
-    required: true,
+    required: false, 
   },
   likes: {
     type: [String],

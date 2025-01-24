@@ -4,27 +4,33 @@ import Counter, { ICounter } from "../models/Counter";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+
 const storage = multer.diskStorage({
-  destination: path.join(__dirname, "uploads"),
-  filename: function (req, file, res) {
-    res(null, Date.now() + "-" + file.originalname);
+  destination: (req, file, cb) => {
+    const uploadPath = "uploads/";
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath);
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
-let upload = multer({ storage });
+const upload = multer({ storage: storage });
 let commentCounter = 0;
 
 const PostController = {
-  
   // Creating Post
   createPost: async (req: Request, res: Response): Promise<void> => {
     try {
       const { title, description, category, image } = req.body;
 
-      let imageUrl = "";
-      if (req.file) {
-        imageUrl = `/uploads/${req.file.filename}`;
-      }
+      // let imageUrl = "";
+      // if (req.file) {
+      //   imageUrl = `/uploads/${req.file.filename}`;
+      // }
       const postCount = await Post.countDocuments();
 
       let counter;
@@ -52,7 +58,7 @@ const PostController = {
         title,
         description,
         category,
-        image: imageUrl,
+        // image: imageUrl,
       });
 
       await newPost.save();
@@ -64,6 +70,37 @@ const PostController = {
       res.status(500).json({ message: err.message || "Internal Server Error" });
     }
   },
+  uploadImage: async (req: Request, res: Response): Promise<void> => {
+    try {
+      let imageUrl = "";
+      if (req.file) {
+        imageUrl = `/uploads/${req.file.filename}`;
+      }
+      res.status(200).json({ location: imageUrl });
+    } catch (error: any) {
+      res
+        .status(500)
+        .json({ message: "Error uploading image", error: error.message });
+    }
+  },
+
+  getImage: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { file } = req.params; 
+      const imagePath = path.join(__dirname, "../uploads", file); 
+  
+      // console.log('Image Path:', imagePath); 
+      if (fs.existsSync(imagePath)) {
+        res.sendFile(imagePath);
+      } else {
+        res.status(404).json({ message: "Image not found" }); 
+      }
+    } catch (error: any) {
+      console.error("Error serving image:", error);
+      res.status(500).json({ message: "Error retrieving the image", error: error.message });
+    }
+  },
+  
 
   // Fetching All Post
   getAllPosts: async (req: Request, res: Response): Promise<void> => {
@@ -91,29 +128,28 @@ const PostController = {
     }
   },
 
-  
-    //  Fetching  Image by ID
-  getImageByPostID: async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { id } = req.params;
+  //  Fetching  Image by ID
+  // getImageByPostID: async (req: Request, res: Response): Promise<void> => {
+  //   try {
+  //     const { id } = req.params;
 
-      const post = await Post.findOne({ id: Number(id) });
-      if (!post || !post.image) {
-        res.status(404).json({ message: "Image not found for this post" });
-        return;
-      }
-      const imagePath = path.join(__dirname, "..", post.image);
+  //     const post = await Post.findOne({ id: Number(id) });
+  //     if (!post || !post.image) {
+  //       res.status(404).json({ message: "Image not found for this post" });
+  //       return;
+  //     }
+  //     const imagePath = path.join(__dirname, "..", post.image);
 
-      if (!fs.existsSync(imagePath)) {
-        res.status(404).json({ message: "Image file not found" });
-        return;
-      }
+  //     if (!fs.existsSync(imagePath)) {
+  //       res.status(404).json({ message: "Image file not found" });
+  //       return;
+  //     }
 
-      res.sendFile(imagePath);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  },
+  //     res.sendFile(imagePath);
+  //   } catch (error: any) {
+  //     res.status(500).json({ message: error.message });
+  //   }
+  // },
 
   // Updating Post
   updatePost: async (req: Request, res: Response): Promise<void> => {
