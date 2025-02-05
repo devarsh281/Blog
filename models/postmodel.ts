@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
+import { z } from "zod";
 
 export interface IPost extends Document {
   id: number;
@@ -10,8 +11,27 @@ export interface IPost extends Document {
   image: string;
   likes: string[];
   likesCount: number;
-  comments: { userId: Number; text: string,dat:Date }[];
+  comments: { userId: number; text: string; dat: Date }[];
 }
+
+export const PostValidationSchema = z.object({
+  id: z.number().int().positive().optional(), 
+  title: z.string().min(3, "Title must be at least 3 characters long"),
+  description: z.string().min(10, "Description must be at least 10 characters long"),
+  category: z.string().min(3, "Category must be at least 3 characters long"),
+  date: z.date().optional(),
+  views: z.number().default(0),
+  image: z.string().url().optional(),  
+  likes: z.array(z.string()).default([]),
+  likesCount: z.number().default(0),
+  comments: z.array(
+    z.object({
+      userId: z.number(),
+      text: z.string().min(1, "Comment text must not be empty"),
+      dat: z.date().default(() => new Date()),  
+    })
+  ).default([]),
+});
 
 const PostSchema: Schema = new Schema({
   id: {
@@ -40,7 +60,7 @@ const PostSchema: Schema = new Schema({
   },
   image: {
     type: String,
-    required: false, 
+    required: false,
   },
   likes: {
     type: [String],
@@ -48,7 +68,7 @@ const PostSchema: Schema = new Schema({
   },
   likesCount: {
     type: Number,
-    default: 0,  
+    default: 0,
   },
   comments: [
     {
@@ -60,4 +80,5 @@ const PostSchema: Schema = new Schema({
 });
 
 const Post: Model<IPost> = mongoose.model<IPost>("Post", PostSchema);
+
 export default Post;

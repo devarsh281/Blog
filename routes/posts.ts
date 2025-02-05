@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import PostController from "../controllers/PostController";
+import PostController from "../controllers/post.controller";
 import multer from "multer";
 import path from "path";
 
