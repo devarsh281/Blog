@@ -8,11 +8,26 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "https://blog-public-vert.vercel.app",
+  "https://admin-alpha-vert.vercel.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'), false);
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'], 
+  credentials: true, 
+}));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors({
-  origin: ['https://blog-public-vert.vercel.app', 'https://admin-alpha-vert.vercel.app']
-}));
 
 mongoose
   .connect(process.env.uri || "", {})
@@ -28,6 +43,7 @@ app.use("/posts", postRoutes);
 app.use("/category", categoryRoutes);
 app.use("/analysis", analyticsRoutes);
 app.use("/auth", authRoutes);
+
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, welcome to the blog API!');
 });
