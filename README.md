@@ -72,35 +72,6 @@ router.get("/updateviews/:id",analyticsController.viewCount)
 - **GET /analysis/analytics**: Get the total number of posts.
 - **GET /analysis/updateviews**: Get total views for each posts.
 
-## 📁 Folder Structure
-
-├── Blog-MANAGEMENT/                         # Backend folder (Node.js, Express)
-│   ├── controllers/                         # Controller files for handling requests
-│   │   ├── auth.controller.ts               # Handles user authentication
-│   │   ├── category.controller.ts           # Handles category management
-│   │   ├── post.controller.ts               # Handles post management
-│   │   ├── analytics.controller.ts          # Handles analytics
-│   ├── middlewares/                         # Middleware file (e.g., for validation)
-│   │   └── error.handlers.ts                # Middleware for request validation
-│   ├── models/                              # Mongoose models for MongoDB
-│   │   ├── usermodel.ts                     # User model
-│   │   ├── postmodel.ts                     # Post model
-│   │   ├── catmodel.ts                      # Category model
-│   │   ├── counter.ts                       # Post Counter model
-│   │   └── catcounter.ts                    # Category Comment model
-│   ├── routes/                              # API route files
-│   │   ├── auth.ts                          # Routes for user authentication
-│   │   ├── category.ts                      # Routes for category management
-│   │   ├── posts.ts                         # Routes for post management
-│   │   └── analytics.ts                     # Routes for analytics
-│   ├── server.ts                            # Main server entry file
-│   └── .env.example                         # Environment variables (e.g., JWT secret, database URI)
-│   └── package.json                         # Backrend dependencies
-│   ├── uploads/                             # Folder for uploaded Image
-├── .gitignore                               # Git ignore file
-├── .tsconfig.json                           # Typescript config file
-└── README.md                                # Project readme
-
 
 ## Install the required dependencies:
 
