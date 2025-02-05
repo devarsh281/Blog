@@ -10,9 +10,9 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(
-  cors()
-);
+app.use(cors({
+  origin: ['https://blog-public-vert.vercel.app', 'https://admin-alpha-vert.vercel.app']
+}));
 
 mongoose
   .connect(process.env.uri || "", {})
